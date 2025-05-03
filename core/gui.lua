@@ -1,5 +1,6 @@
 local scripts = require("core.storage.scripts")
 local command_blocks = require("core.storage.command_blocks")
+local hooks = require("core.hooks")
 local M = {}
 
 local opened_entity = {}
@@ -128,7 +129,7 @@ function M.on_close(e)
     local elem = e.element
 
     if p and elem and elem.name == "cb_window" then
-        scripts.recompile_all_script()
+        scripts.compile_all()
         cleanup_window(p)
     end
 end
@@ -168,10 +169,11 @@ function M.on_selected(e)
     end
 end
 
-function M.on_load()
+hooks.add_hook("on_load", function()
     for _, player in pairs(game.players) do
         player.opened = nil
     end
-end
+end)
+
 
 return M

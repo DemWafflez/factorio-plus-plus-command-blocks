@@ -7,7 +7,7 @@ local hooks = {}
 local callbacks = auto_table.create(1)
 
 ---@param name string
----@param func fun(id: integer, ...)
+---@param func fun(...) : boolean | any
 function hooks.add_hook(name, func)
     table.insert(callbacks[name], reg.register(func))
 end
@@ -21,13 +21,16 @@ function hooks.generic_callback(name, ...)
 
     while i <= n do
         local id = cbs[i]
-        if not funcs[id](id, ...) then
+        local func = funcs[id]
+
+        if not func or func(...) == false then
             cbs[i] = cbs[n]
             cbs[n] = nil
             n = n - 1
         else
             i = i + 1
         end
+
     end
 end
 

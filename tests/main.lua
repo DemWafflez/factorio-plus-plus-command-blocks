@@ -1,9 +1,7 @@
 local value = 100
 
----@param api API
-local function main(api)
+local function main(api, data)
     api.print("hallo " .. value)
-    return 0
 end
 
 return main

@@ -91,6 +91,15 @@ function M.tick(wheel)
 end
 
 ---@param wheel TimeWheel
+function M.safe_run_tick(wheel)
+    local ok, error = pcall(M.run_tick, wheel)
+
+    if not ok then
+        game.print("[TIME WHEEL ERROR ALL SCRIPTS CANCELLED] " .. error)
+    end
+end
+
+---@param wheel TimeWheel
 function M.run_tick(wheel)
     M.tick(wheel)
 
@@ -103,28 +112,37 @@ function M.run_tick(wheel)
     local safe_array = wheel.safe_buckets[curr_index]
     local tick = wheel.curr_tick
 
+    local reuse_ids = wheel.reuse_ids
+
     local safe_size = 0
     local i = 1
 
     while i <= n do -- all inlined
+        -- performance > readability
         local id = array[i]
 
         if tick >= wheel.expected_ticks[id] then
-            local dt = funcs[wheel.cb_ids[id]](id)
+            local func = funcs[wheel.cb_ids[id]]
+            
+            if func then
+                local dt = func()
 
-            if dt and dt > 0 then -- inline
-                local expected = tick + dt
-                local new_index = bit32.band(expected, wheel.num_buckets - 1) + 1
+                if dt == false then
+                    reuse_ids[#reuse_ids + 1] = id
+                else
+                    local expected = tick + math.max(dt or 1, 1)
+                    local new_index = bit32.band(expected, wheel.num_buckets - 1) + 1
+        
+                    local size = wheel.bucket_size[new_index] + 1
+                    wheel.bucket_size[new_index] = size
+        
+                    wheel.buckets[new_index][size] = id
+                    wheel.expected_ticks[id] = expected
+                end
 
-                local size = wheel.bucket_size[new_index] + 1
-                wheel.bucket_size[new_index] = size
-
-                wheel.buckets[new_index][size] = id
-                wheel.expected_ticks[id] = expected
             else
-                wheel.reuse_ids[#wheel.reuse_ids + 1] = id
+                reuse_ids[#reuse_ids + 1] = id
             end
-
         else
             safe_size = safe_size + 1
             safe_array[safe_size] = id
