@@ -51,7 +51,9 @@ local function create_window(player, entity)
 
     local text_box = window.add{type = "text-box", name = "script_text"}
 
-    text_box.text = scripts.exist_script(data.key) and scripts.get_script(data.key) or ""
+    if scripts.exist_script(data.key) then
+        text_box.text = scripts.get_script(data.key)
+    end
 
     text_box.style.width = 400
     text_box.style.height = 350
@@ -59,7 +61,7 @@ local function create_window(player, entity)
 
     local flow_2 = window.add{type = "flow", name = "flow_2", direction = "horizontal"}
 
-    flow_2.add{type = "button", name = "set_current", caption = "SELECTED: " .. data.key}
+    flow_2.add{type = "button", name = "set_current", caption = "Selected: " .. data.key}
     flow_2.add{type = "button", name = "toggle_enabled", caption = data.enabled and "ON" or "OFF"}
     flow_2.add{type = "button", name = "delete_current", caption = "Delete Current Script"}
 
@@ -96,12 +98,25 @@ local on_click = {
 
     set_current = function(player, elem)
         local dropdown = cached_dropdowns[player.index]
+        local index = dropdown.selected_index
 
-        local ent = opened_entity[player.index]
-        local data = command_blocks.get_data(ent.unit_number)
+        if index > 0 then
+            local ent = opened_entity[player.index]
+            local data = command_blocks.get_data(ent.unit_number)
 
-        data.key = dropdown.get_item(dropdown.selected_index)
-        elem.caption = "SELECTED: " .. data.key
+            data.key = dropdown.get_item(index)
+            elem.caption = "Selected: " .. data.key
+        end
+    end,
+
+    delete_current = function(player, elem)
+        local dropdown = cached_dropdowns[player.index]
+        local index = dropdown.selected_index
+        
+        if index > 0 then
+            scripts.delete_script(dropdown.get_item(index))
+            dropdown.remove_item(index)
+        end
     end,
 
     toggle_enabled = function(player, elem)
@@ -173,6 +188,8 @@ hooks.add_hook("on_load", function()
     for _, player in pairs(game.players) do
         player.opened = nil
     end
+
+    return false
 end)
 
 

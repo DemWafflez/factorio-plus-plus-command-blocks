@@ -1,8 +1,5 @@
 local hooks = require("core.hooks")
 
-require("core.hooks.cb_builder")
-require("core.hooks.cb_runner")
-
 ---@class CBData
 ---@field ent LuaEntity
 ---@field key string
@@ -10,21 +7,34 @@ require("core.hooks.cb_runner")
 
 local M = {}
 
----@return CBData[]
-function M.get_datas()
-    return storage.command_blocks
-end
-
 ---@return CBData
 function M.get_data(id)
-    local index = storage.cb_id_to_index[id]
-    assert(index ~= nil, "ID DOES NOT EXIST")
-    return storage.command_blocks[index]
+    local data = storage.command_blocks[id]
+    assert(data ~= nil, "ID DOES NOT EXIST")
+    return data
 end
 
 hooks.add_hook("on_load", function()
     storage.command_blocks = storage.command_blocks or {}
-    storage.cb_id_to_index = storage.cb_id_to_index or {}
+    return false
+end)
+
+hooks.add_hook("on_build", function(e)
+    local entity = e.entity or e.created_entity
+
+    if entity.name == "command-block" then
+        local id = entity.unit_number
+        storage.command_blocks[id] = {ent = entity, key = "", enabled = false}
+    end
+end)
+
+hooks.add_hook("on_destroy", function(e)
+    local entity = e.entity or e.created_entity
+
+    if entity.name == "command-block" then
+        local id = entity.unit_number
+        storage.command_blocks[id] = nil
+    end
 end)
 
 return M

@@ -1,12 +1,9 @@
-local reg = require("core.utils.func_registry")
-local funcs = reg.get()
-
 ---@class TimeWheel
 ---@field buckets integer[][]
 ---@field safe_buckets integer[][]
 ---@field bucket_size integer[]
 ---@field num_buckets integer
----@field cb_ids integer[]
+---@field callbacks function[]
 ---@field expected_ticks integer[]
 ---@field total_ids integer
 ---@field reuse_ids integer[]
@@ -32,7 +29,7 @@ function M.create(num_buckets)
         safe_buckets = safe_buckets,
         bucket_size = bucket_size,
 
-        cb_ids = {},
+        callbacks = {},
         expected_ticks = {},
         reuse_ids = {},
         total_ids = 0,
@@ -57,31 +54,48 @@ function M.get_id(wheel)
 end
 
 ---@param wheel TimeWheel
+function M.clear_id(wheel, id)
+    wheel.reuse_ids[#wheel.reuse_ids + 1] = id
+
+    wheel.callbacks[id] = nil
+    wheel.expected_ticks[id] = nil
+end
+
+---@param wheel TimeWheel
 function M.schedule(wheel, dt, callback)
     local id = M.get_id(wheel)
-    wheel.cb_ids[id] = reg.register(callback)
+    wheel.callbacks[id] = callback
 
-    -- inline 
-    local expected = wheel.curr_tick + dt
-    local new_index = bit32.band(expected, wheel.num_buckets - 1) + 1
-
-    local size = wheel.bucket_size[new_index] + 1
-    wheel.bucket_size[new_index] = size
-
-    wheel.buckets[new_index][size] = id
-    wheel.expected_ticks[id] = expected
+    M.reschedule(wheel, dt, id)
 end
 
 ---@param wheel TimeWheel
 function M.reschedule(wheel, dt, id)
     local expected = wheel.curr_tick + dt
-    local new_index = bit32.band(expected, wheel.num_buckets - 1) + 1
+    local new_bucket = bit32.band(expected, wheel.num_buckets - 1) + 1
 
-    local size = wheel.bucket_size[new_index] + 1
-    wheel.bucket_size[new_index] = size
+    local size = wheel.bucket_size[new_bucket] + 1
+    wheel.bucket_size[new_bucket] = size
 
-    wheel.buckets[new_index][size] = id
+    wheel.buckets[new_bucket][size] = id
     wheel.expected_ticks[id] = expected
+end
+
+---@param wheel TimeWheel
+function M.swap_buffers(wheel, index)
+    local temp = wheel.buckets[index]
+    wheel.buckets[index] = wheel.safe_buckets[index]
+    wheel.safe_buckets[index] = temp
+end
+
+---@param wheel TimeWheel
+function M.set_bucket_size(wheel, index, size)
+    wheel.bucket_size[index] = size
+end
+
+---@param wheel TimeWheel
+function M.get_bucket_size(wheel, index)
+    return wheel.bucket_size[index]
 end
 
 ---@param wheel TimeWheel
@@ -103,57 +117,54 @@ end
 function M.run_tick(wheel)
     M.tick(wheel)
 
-    local funcs = funcs
-
+    local num_buckets = wheel.num_buckets
+    local tick = wheel.curr_tick
     local curr_index = wheel.curr_index
-    local n = wheel.bucket_size[curr_index]
+
+    local size = M.get_bucket_size(wheel, curr_index)
+    local new_size = 0
+
+    if size == 0 then
+        return
+    end
 
     local array = wheel.buckets[curr_index]
     local safe_array = wheel.safe_buckets[curr_index]
-    local tick = wheel.curr_tick
 
+    local buckets = wheel.buckets
+    local callbacks = wheel.callbacks
     local reuse_ids = wheel.reuse_ids
+    local bucket_size = wheel.bucket_size
+    local expected_ticks = wheel.expected_ticks
 
-    local safe_size = 0
-    local i = 1
-
-    while i <= n do -- all inlined
-        -- performance > readability
+    for i = 1, size do
         local id = array[i]
 
-        if tick >= wheel.expected_ticks[id] then
-            local func = funcs[wheel.cb_ids[id]]
-            
-            if func then
-                local dt = func()
+        if tick >= expected_ticks[id] then
+            local dt = callbacks[id]()
 
-                if dt == false then
-                    reuse_ids[#reuse_ids + 1] = id
-                else
-                    local expected = tick + math.max(dt or 1, 1)
-                    local new_index = bit32.band(expected, wheel.num_buckets - 1) + 1
-        
-                    local size = wheel.bucket_size[new_index] + 1
-                    wheel.bucket_size[new_index] = size
-        
-                    wheel.buckets[new_index][size] = id
-                    wheel.expected_ticks[id] = expected
-                end
-
-            else
+            if dt == false then
                 reuse_ids[#reuse_ids + 1] = id
+                callbacks[id] = nil
+                expected_ticks[id] = nil
+            else
+                local expected = tick + math.max(dt or 1, 1)
+                local new_bucket = bit32.band(expected, num_buckets - 1) + 1
+
+                local size = bucket_size[new_bucket] + 1
+                bucket_size[new_bucket] = size
+
+                buckets[new_bucket][size] = id
+                expected_ticks[id] = expected
             end
         else
-            safe_size = safe_size + 1
-            safe_array[safe_size] = id
+            new_size = new_size + 1
+            safe_array[new_size] = id
         end
-
-        i = i + 1
     end
 
-    wheel.buckets[curr_index] = safe_array
-    wheel.safe_buckets[curr_index] = array
-    wheel.bucket_size[curr_index] = safe_size
+    M.swap_buffers(wheel, curr_index)
+    M.set_bucket_size(wheel, curr_index, new_size)
 end
 
 return M

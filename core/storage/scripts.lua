@@ -23,7 +23,7 @@ function M.update_script(key, script)
 end
 
 function M.get_script(key)
-    assert(storage.scripts[key] ~= "Script doent exist!")
+    assert(storage.scripts[key] ~= nil, "Script doent exist!")
     return storage.scripts[key]
 end
 
@@ -59,9 +59,12 @@ function M.safe_run_func(func, ...)
 end
 
 function M.compile_all()
+    hooks.generic_callback("pre_compile_all")
+
     for key, dirty in pairs(dirty_flags) do
         if dirty then
             local script = storage.scripts[key]
+            
             local func, error = load(script, key, "t", {})
 
             if func then
@@ -72,6 +75,7 @@ function M.compile_all()
             end
 
             dirty_flags[key] = nil
+
         end
     end
 
@@ -89,7 +93,12 @@ function M.run_key(key, ...)
     end
 
     M.safe_run_func(function(...)
-        func()(...)
+        local main = func()
+
+        if main then
+            main(...)
+        end
+
     end, ...)
 end
 
@@ -102,6 +111,7 @@ hooks.add_hook("on_load", function()
     end
     
     M.compile_all()
+    return false
 end)
 
 return M

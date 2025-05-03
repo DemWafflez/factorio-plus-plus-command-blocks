@@ -7,8 +7,7 @@ local gui = require("core.gui")
 
 __loaded = false
 __devmode = true
-__testmode = true
-
+__testmode = false
 __tasks = time_wheel.create(1024)
 __api_tasks = time_wheel.create(1024)
 
@@ -63,9 +62,11 @@ if __testmode then
                     assert(total == count, "NOT SYNCED")
                     total = 0
                 end
-                
+
                 return dt
             end)
         end
+
+        return false
     end)
 end
