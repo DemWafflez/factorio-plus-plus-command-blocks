@@ -1,6 +1,8 @@
 local hooks  = require("core.hooks")
 local api = require("core.environment.api")
 local events = require("core.events")
+local cb = require("core.storage.command_blocks")
+local blueprint = require("core.blueprint")
 
 local time_wheel = require("core.time_wheel")
 local gui = require("core.gui")
@@ -45,6 +47,8 @@ script.on_event(d_e.on_gui_closed, gui.on_close)
 script.on_event(d_e.on_gui_click, gui.on_click)
 script.on_event(d_e.on_gui_text_changed, gui.on_text_changed)
 script.on_event(d_e.on_gui_selection_state_changed, gui.on_selected)
+
+script.on_event(d_e.on_player_setup_blueprint, blueprint.setup_blueprint)
 
 if __testmode then
     hooks.add_hook("on_load", function()

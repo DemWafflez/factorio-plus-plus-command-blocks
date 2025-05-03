@@ -10,16 +10,12 @@ function M.add_script(key, script)
     assert(storage.scripts[key] == nil, "Script already exists!")
     storage.scripts[key] = script
     dirty_flags[key] = true
-    
-    hooks.generic_callback("on_dirty_script", key)
 end
 
 function M.update_script(key, script)
     assert(storage.scripts[key] ~= nil, "Script doent exist!")
     storage.scripts[key] = script
     dirty_flags[key] = true
-
-    hooks.generic_callback("on_dirty_script", key)
 end
 
 function M.get_script(key)
@@ -32,8 +28,6 @@ function M.delete_script(key)
     storage.scripts[key] = nil
     dirty_flags[key] = nil
     compiled_funcs[key] = nil
-
-    hooks.generic_callback("on_delete_script", key)
 end
 
 function M.exist_script(key)
@@ -59,8 +53,8 @@ function M.safe_run_func(func, ...)
 end
 
 function M.compile_all()
-    hooks.generic_callback("pre_compile_all")
-
+    game.print("RECOMPILING ALL SCRIPTS...")
+    
     for key, dirty in pairs(dirty_flags) do
         if dirty then
             local script = storage.scripts[key]
@@ -83,7 +77,9 @@ function M.compile_all()
 end
 
 ---@param key string
-function M.run_key(key, ...)
+---@param api API
+---@param caller CBData
+function M.run_key(key, api, caller)
     assert(storage.scripts[key] ~= nil, "Script doesnt exist!")
     local func = compiled_funcs[key]
 
@@ -92,14 +88,14 @@ function M.run_key(key, ...)
         return
     end
 
-    M.safe_run_func(function(...)
+    M.safe_run_func(function()
         local main = func()
 
         if main then
-            main(...)
+            main(api, caller)
         end
 
-    end, ...)
+    end)
 end
 
 hooks.add_hook("on_load", function()
@@ -107,7 +103,6 @@ hooks.add_hook("on_load", function()
     
     for key in pairs(storage.scripts) do
         dirty_flags[key] = true
-        hooks.generic_callback("on_dirty_script", key)
     end
     
     M.compile_all()

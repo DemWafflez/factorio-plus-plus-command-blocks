@@ -1,4 +1,7 @@
+local scripts = require("core.storage.scripts")
 local hooks = require("core.hooks")
+local callbacks = require("core.environment.callback_wrapper")
+local api = require("core.environment.api")
 
 ---@class CBData
 ---@field ent LuaEntity
@@ -34,6 +37,19 @@ hooks.add_hook("on_destroy", function(e)
     if entity.name == "command-block" then
         local id = entity.unit_number
         storage.command_blocks[id] = nil
+        callbacks.disable_caller(id)
+    end
+end)
+
+hooks.add_hook("on_compile_all", function()
+    callbacks.disable_all_callers()
+
+    for _, data in pairs(storage.command_blocks) do
+        local key = data.key
+
+        if data.enabled then
+            scripts.run_key(key, api, data) 
+        end
     end
 end)
 
