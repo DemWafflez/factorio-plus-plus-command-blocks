@@ -1,5 +1,5 @@
 local scripts = require("core.storage.scripts")
-local command_blocks = require("core.storage.command_blocks")
+local command_blocks = require("core.logic.cb")
 local hooks = require("core.hooks")
 local M = {}
 
@@ -20,7 +20,7 @@ local function create_window(player, entity)
 
     window.auto_center = true
     window.style.width = 500
-    window.style.height = 500
+    window.style.height = 520
 
     local flow = window.add{type = "flow", name = "flow", direction = "horizontal"}
     
@@ -28,7 +28,7 @@ local function create_window(player, entity)
     flow.add{type = "button", name = "script_create", caption = "Create Script"}
 
     local array = scripts.get_scripts()
-    local data = command_blocks.get_data(entity.unit_number)
+    local data = command_blocks.get_cb(entity.unit_number)
 
     local keys = {}
     local i = 0
@@ -64,6 +64,8 @@ local function create_window(player, entity)
     flow_2.add{type = "button", name = "set_current", caption = "Selected: " .. data.key}
     flow_2.add{type = "button", name = "toggle_enabled", caption = data.enabled and "ON" or "OFF"}
     flow_2.add{type = "button", name = "delete_current", caption = "Delete Current Script"}
+
+    window.add{type = "button", name = "compile_all", caption = "Compile"}
 
     opened_entity[player.index] = entity
     cached_dropdowns[player.index] = dropdown
@@ -102,7 +104,7 @@ local on_click = {
 
         if index > 0 then
             local ent = opened_entity[player.index]
-            local data = command_blocks.get_data(ent.unit_number)
+            local data = command_blocks.get_cb(ent.unit_number)
 
             data.key = dropdown.get_item(index)
             elem.caption = "Selected: " .. data.key
@@ -121,10 +123,14 @@ local on_click = {
 
     toggle_enabled = function(player, elem)
         local ent = opened_entity[player.index]
-        local data = command_blocks.get_data(ent.unit_number)
+        local data = command_blocks.get_cb(ent.unit_number)
 
         data.enabled = not data.enabled
         elem.caption = data.enabled and "ON" or "OFF"
+    end,
+
+    compile_all = function(player, elem)
+        scripts.compile_all()
     end
 }
 
@@ -132,6 +138,10 @@ local on_click = {
 function M.on_open(e)
     local p = game.get_player(e.player_index)
     local entity = e.entity
+
+    if entity and entity.name == "command-nexus" then
+        p.opened = nil
+    end
 
     if p and entity and entity.name == "command-block" then
         p.opened = create_window(p, entity)
@@ -144,7 +154,6 @@ function M.on_close(e)
     local elem = e.element
 
     if p and elem and elem.name == "cb_window" then
-        scripts.compile_all()
         cleanup_window(p)
     end
 end

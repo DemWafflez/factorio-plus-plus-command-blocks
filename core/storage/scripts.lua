@@ -1,10 +1,24 @@
 local hooks = require("core.hooks")
+local api = require("core.api")
 
 ---@class Scripts
 local M = {}
 
 local dirty_flags = {}
 local compiled_funcs = {}
+
+local shared_script_table = {    
+    pairs = pairs,
+    ipairs = ipairs,
+    type = type,
+    tostring = tostring,
+    tonumber = tonumber,
+    select = select,
+    next = next,
+    math = math, 
+    table = table,
+    string = string
+}
 
 function M.add_script(key, script) 
     assert(storage.scripts[key] == nil, "Script already exists!")
@@ -42,60 +56,46 @@ function M.get_scripts()
     return storage.scripts
 end
 
-function M.safe_run_func(func, ...)
-    local ok, result = pcall(func, ...)
-
-    if not ok then
-        game.print("[SCRIPT] : " .. result) -- result = error
-    end
-
-    return result
-end
-
 function M.compile_all()
     game.print("RECOMPILING ALL SCRIPTS...")
-    
+
     for key, dirty in pairs(dirty_flags) do
         if dirty then
             local script = storage.scripts[key]
-            
-            local func, error = load(script, key, "t", {})
+            local func, error = load(script, key, "t", shared_script_table)
 
             if func then
                 compiled_funcs[key] = func
             else 
-                game.print("[SCRIPT] : " .. error)
+                game.print("[COMPILE ERROR] : " .. error)
                 compiled_funcs[key] = nil
             end
 
             dirty_flags[key] = nil
-
         end
     end
 
-    hooks.generic_callback("on_compile_all")
+    hooks.safe_generic_callback("on_compile_all")
 end
 
 ---@param key string
 ---@param api API
----@param caller CBData
+---@param caller CB
 function M.run_key(key, api, caller)
     assert(storage.scripts[key] ~= nil, "Script doesnt exist!")
+    
     local func = compiled_funcs[key]
+    if not func then return end
 
-    if not func then
-        game.print("func is not compiled or failed compile")
-        return
-    end
-
-    M.safe_run_func(function()
-        local main = func()
-
-        if main then
-            main(api, caller)
-        end
-
+    local ok, result = pcall(function()
+        func()(api, caller)
     end)
+
+    if not ok then
+        local string = "[" .. key .. "]" .. result
+        game.print(string)
+        api.out.error(caller, string, {0, -2}, 360)
+    end
 end
 
 hooks.add_hook("on_load", function()

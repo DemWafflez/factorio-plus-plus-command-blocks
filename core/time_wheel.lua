@@ -62,11 +62,20 @@ function M.clear_id(wheel, id)
 end
 
 ---@param wheel TimeWheel
+---@param dt integer
+---@param callback fun(id : integer) : boolean | integer
 function M.schedule(wheel, dt, callback)
     local id = M.get_id(wheel)
     wheel.callbacks[id] = callback
 
-    M.reschedule(wheel, dt, id)
+    local expected = wheel.curr_tick + dt
+    local new_bucket = bit32.band(expected, wheel.num_buckets - 1) + 1
+
+    local size = wheel.bucket_size[new_bucket] + 1
+    wheel.bucket_size[new_bucket] = size
+
+    wheel.buckets[new_bucket][size] = id
+    wheel.expected_ticks[id] = expected
 end
 
 ---@param wheel TimeWheel
@@ -109,7 +118,7 @@ function M.safe_run_tick(wheel)
     local ok, error = pcall(M.run_tick, wheel)
 
     if not ok then
-        game.print("[TIME WHEEL ERROR ALL SCRIPTS CANCELLED] " .. error)
+        game.print("[SCHEDULER ERROR] " .. error)
     end
 end
 
@@ -137,19 +146,23 @@ function M.run_tick(wheel)
     local bucket_size = wheel.bucket_size
     local expected_ticks = wheel.expected_ticks
 
-    for i = 1, size do
+    for i = 1, size do -- not meant to be readable
         local id = array[i]
 
         if tick >= expected_ticks[id] then
-            local dt = callbacks[id]()
+            local dt = callbacks[id](id)
 
             if dt == false then
                 reuse_ids[#reuse_ids + 1] = id
                 callbacks[id] = nil
                 expected_ticks[id] = nil
             else
-                local expected = tick + math.max(dt or 1, 1)
-                local new_bucket = bit32.band(expected, num_buckets - 1) + 1
+                if not dt or dt < 1 then
+                    dt = 1
+                end
+                
+                local expected = tick + dt
+                local new_bucket = expected % num_buckets + 1
 
                 local size = bucket_size[new_bucket] + 1
                 bucket_size[new_bucket] = size

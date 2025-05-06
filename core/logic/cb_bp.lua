@@ -1,7 +1,7 @@
-local cb = require("core.storage.command_blocks")
+local cb = require("core.logic.cb")
+local runner = require("core.logic.cb_runner")
 local scripts = require("core.storage.scripts")
 local hooks = require("core.hooks")
-local api = require("core.environment.api")
 local M = {}
 
 ---@param bp LuaItemStack
@@ -18,7 +18,7 @@ local function generate_bp_tags(bp, mapping_array)
         local ent = mapping_array[ent_num]
 
         if ent and ent.name == "command-block" then
-            local data = cb.get_data(ent.unit_number)
+            local data = cb.get_cb(ent.unit_number)
             local key = data.key
             
             if scripts.exist_script(key) then
@@ -62,16 +62,18 @@ hooks.add_hook("on_build", function(e)
 
         if not scripts.exist_script(key) then
             scripts.add_script(key, data.source)
+
         elseif data.source ~= scripts.get_script(key) then
             key = key .. "_bp_fallback"
             scripts.add_script(key, data.source)
+            
         end
 
-        local real_data = cb.get_data(ent.unit_number)
+        local real_data = cb.get_cb(ent.unit_number)
         real_data.key = key
         real_data.enabled = data.enabled
 
-        scripts.run_key(key, api, real_data)
+        runner.run(real_data)
     end
 end)
 

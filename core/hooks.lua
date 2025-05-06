@@ -9,6 +9,14 @@ function hooks.add_hook(name, func)
     table.insert(callbacks[name], func)
 end
 
+function hooks.safe_generic_callback(name, ...)
+    local ok, error = pcall(hooks.generic_callback, name, ...)
+
+    if not ok then
+        game.print("[HOOK ERROR] " .. error)
+    end
+end
+
 ---@param name string
 function hooks.generic_callback(name, ...)
     local cbs = callbacks[name]

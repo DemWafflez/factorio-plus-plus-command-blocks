@@ -37,3 +37,10 @@ end
 data:extend({createBlock("command-block", "constant-combinator", "constant-combinator")})
 data:extend({createBlockItem("command-block")})
 data:extend({createBlockRecipe("command-block")})
+
+local nexus = createBlock("command-nexus", "constant-combinator", "constant-combinator")
+nexus.max_health = 1000
+nexus.minable.mining_time = 30
+data:extend({nexus})
+data:extend({createBlockItem("command-nexus")})
+data:extend({createBlockRecipe("command-nexus")})

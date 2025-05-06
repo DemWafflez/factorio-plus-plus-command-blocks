@@ -1,17 +1,15 @@
-local hooks  = require("core.hooks")
-local api = require("core.environment.api")
-local events = require("core.events")
-local cb = require("core.storage.command_blocks")
-local blueprint = require("core.blueprint")
-
 local time_wheel = require("core.time_wheel")
-local gui = require("core.gui")
-
-__loaded = false
-__devmode = true
-__testmode = false
 __tasks = time_wheel.create(1024)
 __api_tasks = time_wheel.create(1024)
+
+local hooks  = require("core.hooks")
+local api = require("core.api")
+local events = require("core.events")
+local nexus = require("core.logic.nexus")
+local cb = require("core.logic.cb")
+local cb_hooker = require("core.logic.cb_hooks")
+local blueprint = require("core.logic.cb_bp")
+local gui = require("core.gui")
 
 local d_e = defines.events
 
@@ -29,6 +27,7 @@ local destroy_events = {
     d_e.script_raised_destroy
 }
 
+__loaded = false
 script.on_event(d_e.on_tick, function()
     if not __loaded then
         events.on_load()
@@ -49,28 +48,3 @@ script.on_event(d_e.on_gui_text_changed, gui.on_text_changed)
 script.on_event(d_e.on_gui_selection_state_changed, gui.on_selected)
 
 script.on_event(d_e.on_player_setup_blueprint, blueprint.setup_blueprint)
-
-if __testmode then
-    hooks.add_hook("on_load", function()
-        local total = 0
-        local rng = game.create_random_generator(124)
-        local count = 10000
-    
-        local dt = 1
-    
-        for i = 1, count do
-            time_wheel.schedule(__tasks, dt, function(id)
-                total = total + 1
-
-                if id == count then
-                    assert(total == count, "NOT SYNCED")
-                    total = 0
-                end
-
-                return dt
-            end)
-        end
-
-        return false
-    end)
-end
