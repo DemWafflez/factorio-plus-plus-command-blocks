@@ -3,7 +3,6 @@ local auto_table = require("core.utils.auto_table")
 local hooks = require("core.hooks")
 local smelted = require("core.other.smelting_results")
 
----@class InvModule
 local M = {}
 
 local cached_inv = auto_table.create(1)
@@ -49,12 +48,6 @@ function M.get_inv_bulk(entity, ...)
     end
 
     return table.unpack(args)
-end
-
----@param name string
----@return string
-function M.get_smelted(name)
-    return smelted[name]
 end
 
 hooks.add_hook(cb_events.on_destroy, function(e)

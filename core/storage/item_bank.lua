@@ -39,11 +39,13 @@ end
 
 function M.inspect()
     local t = {}
+    local i = 0
     for key, count in pairs(cached_items) do
-        table.insert(t, tostring(key))
-        table.insert(t, " : ")
-        table.insert(t, tostring(count))
-        table.insert(t, "\n")
+        i = i + 1
+        t[i] = tostring(key)
+        t[i + 1] = " : "
+        t[i + 2] = tostring(count)
+        t[i + 3] = "\n"
     end
 
     return table.concat(t)

@@ -89,6 +89,7 @@ function M.compile_all()
     end
 
     events.on_compile_all()
+    game.print("COMPILING DONE")
 end
 
 ---@param key string

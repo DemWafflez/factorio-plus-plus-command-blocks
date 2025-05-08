@@ -2,7 +2,6 @@ local wire_types = require("core.other.wire_types")
 local wheel = require("core.time_wheel")
 local auto_table = require("core.utils.auto_table")
 
----@class WireModule
 local M = {}
 
 local cached_circuits = auto_table.create(1)

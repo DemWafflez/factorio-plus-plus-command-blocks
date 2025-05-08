@@ -41,6 +41,7 @@ local function create_bottom_buttons(window, data)
     flow_2.add{type = "button", name = "toggle_enabled", caption = data.enabled and "ON" or "OFF"}
     flow_2.add{type = "button", name = "set_current", caption = "Selected: " .. data.key}
     flow_2.add{type = "button", name = "delete_current", caption = "Delete Current Script"}
+    window.add{type = "button", name = "compile_all", caption = "Compile All"}
 end
 
 local function update_mappings()

@@ -13,14 +13,14 @@ function M.hook_callback(caller, callback)
 
     local caller_id = ent.unit_number
     local array = caller_data[caller_id] or {}
-    local index = total + 1
+    caller_data[caller_id] = array
 
+    total = total + 1
+    local index = total
+    
     array[#array + 1] = index
     allowed[index] = true
     funcs[index] = callback
-
-    caller_data[caller_id] = array
-    total = index
 
     return function(...)
         if caller.enabled and allowed[index] then

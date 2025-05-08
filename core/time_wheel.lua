@@ -80,6 +80,30 @@ function M.reschedule(wheel, dt, id)
 end
 
 ---@param wheel TimeWheel
+---@param size integer
+---@param total_ticks integer
+---@param dt_per_tick integer
+---@param callback fun(start : integer, last : integer)
+function M.split_task(wheel, size, total_ticks, dt_per_tick, callback)
+    local dx = math.floor(size / total_ticks)
+    local i = 0
+
+    M.schedule(wheel, dt_per_tick, function()
+        if i >= total_ticks then
+            return false
+        end
+
+        local start = i * dx + 1
+        local last = i < total_ticks and start + dx - 1 or size
+
+        callback(start, last)
+
+        i = i + 1
+        return dt_per_tick
+    end)
+end
+
+---@param wheel TimeWheel
 function M.safe_run_tick(wheel)
     local ok, error = pcall(M.run_tick, wheel)
 

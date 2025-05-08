@@ -47,13 +47,15 @@ local on_click = {
     toggle_enabled = function(player, elem)
         local ent = editor.get_opened_entity(player)
         local data = cb.get_cb(ent.unit_number)
+        local enabled = not data.enabled
 
-        data.enabled = not data.enabled
-        elem.caption = data.enabled and "ON" or "OFF"
+        data.enabled = enabled
+        elem.caption = enabled and "ON" or "OFF"
+        cb.try_run_cb(data)
+    end,
 
-        if data.enabled then
-            scripts.compile_all()
-        end
+    compile_all = function(player, elem)
+        scripts.compile_all()
     end
 }
 

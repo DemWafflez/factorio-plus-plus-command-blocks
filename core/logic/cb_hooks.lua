@@ -1,6 +1,8 @@
 local hooks = require("core.hooks")
 local hooker = require("core.logic.cb_hooker")
 local cb = require("core.logic.cb")
+local tw = require("core.time_wheel")
+local out = require("core.modules.out_module")
 
 hooks.add_hook(cb_events.on_load, function()
     ---@type table<integer, CB>
@@ -31,6 +33,18 @@ hooks.add_hook(cb_events.on_compile_all, function()
     
 
     for _, data in pairs(storage.command_blocks) do
-        cb.run_cb(data)
+        cb.try_run_cb(data)
     end
+end)
+
+tw.schedule(__tasks, 1, function()
+    local offset = {0,-1}
+    local color = {1,1,1}
+    local time = 120
+
+    for _, data in pairs(storage.command_blocks) do
+        out.print(data, data.key .. " : " .. tostring(data.enabled), offset, color, time)
+    end
+
+    return time
 end)

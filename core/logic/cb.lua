@@ -30,7 +30,7 @@ function M.create_cb(entity)
 end
 
 ---@param cb CB
-function M.run_cb(cb)
+function M.try_run_cb(cb)
     if cb.enabled then
         scripts.run_key(cb.key, api, cb)
     end

@@ -1,4 +1,3 @@
----@class OutModule
 local M = {}
 
 local function split_lines(str)

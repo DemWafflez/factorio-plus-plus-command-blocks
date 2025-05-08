@@ -16,19 +16,25 @@ local function main(api, caller)
         result_items[i] = r[1]
     end
 
-    api.hooks.add_hook(caller, "smelt_ore", function(ore)
-        api.hooks.parallel_for(caller, #ore_items, 20, 10, function(s, e)
-            api.bank.item_to_bank_bulk(ore_items, s,e )
-            api.bank.item_to_bank_bulk(result_items, s, e)
-            api.bank.bank_to_item_bulk(ore, 25, ore_items, s, e)
-            api.bank.bank_to_item_bulk("coal", 25, fuel_items, s, e)
+    api.hook.add_hook(caller, "smelt_ore", function(ore)
+        api.task.split_task(caller, #ore_items, 20, 10, function(s, e)
+            for i = s, e do
+                api.bank.item_to_bank(ore_items[i])
+                api.bank.item_to_bank(result_items[i])
+                api.bank.bank_to_item(ore, 25, ore_items[i])
+                api.bank.bank_to_item("coal", 25, fuel_items[i])
+            end
     
-            api.hooks.schedule(caller, 120, function() -- edge case
-                api.bank.item_to_bank_bulk(result_items, s, e)
+            api.task.schedule(caller, 120, function()
+                for i = s, e do
+                    api.bank.item_to_bank(result_items[i])
+                end
+            
                 return false
             end)
         end)
     end)
+
 end
 
 return main

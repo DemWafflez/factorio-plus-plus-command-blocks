@@ -10,17 +10,17 @@ local total_recipes = #recipes
 local function main(api, caller)
     local cycles = 0
     local cycles_2 = 0
-    api.hooks.schedule(caller, 60, function()
+    api.task.schedule(caller, 60, function()
         local i = cycles % total_ores + 1
-        api.hooks.trigger_hook("smelt_ore", ores[i])
+        api.hook.trigger_hook("smelt_ore", ores[i])
 
         cycles = cycles + 1
         return 1200
     end)
 
-    api.hooks.schedule(caller, 1, function()
+    api.task.schedule(caller, 1, function()
         local i = cycles_2 % total_recipes + 1
-        api.hooks.trigger_hook("assemble", recipes[i])
+        api.hook.trigger_hook("assemble", recipes[i])
 
         cycles_2 = cycles_2 + 1
         return phase_length[i]
