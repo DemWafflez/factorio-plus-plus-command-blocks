@@ -6,26 +6,15 @@ local auto_table = require("core.utils.auto_table")
 local M = {}
 
 local cached_circuits = auto_table.create(1)
-local cached_net_id = auto_table.create(1)
 local cached_bfs = {}
 local old_wire_count = {}
 
 ---@param entity LuaEntity
 ---@param wire_color string
 ---@return LuaEntity[]
-function M.bfs_wire(entity, wire_color)
+local function bfs(entity, wire_color)
     local type = wire_types[wire_color]
     assert(type ~= nil, "Wire color does not exist!")
-
-    local net = M.get_circuit(entity, wire_color)
-
-    if not net then
-        return {}
-    end
-
-    if cached_bfs[net.network_id] then
-        return cached_bfs[net.network_id]
-    end
 
     local q = {entity.get_wire_connector(type, true)}
     local entities = {entity}
@@ -55,9 +44,47 @@ function M.bfs_wire(entity, wire_color)
         i = i + 1
     end
 
-    old_wire_count[net] = q_size
-    cached_bfs[net.network_id] = entities
     return entities
+end
+
+---@param entity LuaEntity
+---@param wire_color string
+function M.bfs_wire(entity, wire_color)
+    local network = M.get_circuit(entity, wire_color)
+    if not network then return {} end
+
+    local id = network.network_id
+    local bfs_result = cached_bfs[id]
+
+    if not bfs_result then
+        bfs_result = bfs(entity, wire_color)
+        cached_bfs[id] = bfs_result
+    end
+
+    return bfs_result
+end
+
+---@param entity LuaEntity
+---@param wire_color string
+---@param whitelist table<string, boolean>
+---@return LuaEntity[]
+function M.bfs_wire_wl(entity, wire_color, whitelist)
+    local bfs_result = M.bfs_wire(entity, wire_color)
+
+    local array = {}
+    local size = 0
+    local n = #bfs_result
+
+    for i = 1, n do
+        local ent = bfs_result[i]
+
+        if ent.valid and (whitelist[ent.type] or whitelist[ent.name]) then
+            size = size + 1
+            array[size] = ent
+        end
+    end
+
+    return array
 end
 
 ---@param a LuaEntity
@@ -111,7 +138,7 @@ wheel.schedule(__tasks, 30, function(id)
         end
     end
 
-    return 60
+    return 30
 end)
 
 return M

@@ -1,4 +1,5 @@
 local hooks = require("core.hooks")
+local events = require("core.events")
 local api = require("core.api")
 
 ---@class Scripts
@@ -56,8 +57,20 @@ function M.get_scripts()
     return storage.scripts
 end
 
+---@return string
+function M.get_default_script()
+    for key in pairs(storage.scripts) do
+        return key
+    end
+    
+    return ""
+end
+
 function M.compile_all()
     game.print("RECOMPILING ALL SCRIPTS...")
+
+    shared_script_table.game = game
+    shared_script_table.prototypes = prototypes
 
     for key, dirty in pairs(dirty_flags) do
         if dirty then
@@ -75,7 +88,7 @@ function M.compile_all()
         end
     end
 
-    hooks.safe_generic_callback("on_compile_all")
+    events.on_compile_all()
 end
 
 ---@param key string
@@ -98,7 +111,7 @@ function M.run_key(key, api, caller)
     end
 end
 
-hooks.add_hook("on_load", function()
+hooks.add_hook(cb_events.on_load, function()
     storage.scripts = storage.scripts or {}
     
     for key in pairs(storage.scripts) do

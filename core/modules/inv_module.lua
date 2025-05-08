@@ -57,7 +57,7 @@ function M.get_smelted(name)
     return smelted[name]
 end
 
-hooks.add_hook("on_destroy", function(e)
+hooks.add_hook(cb_events.on_destroy, function(e)
     local ent = e.entity
     cached_inv[ent.unit_number] = nil
 end)

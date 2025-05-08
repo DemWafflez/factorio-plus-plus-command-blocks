@@ -1,5 +1,6 @@
 -- debug
 local util = require("util")
+local item_sounds = require("__base__.prototypes.item_sounds")
 
 local function createBlockItem(name)
     return {
@@ -7,7 +8,7 @@ local function createBlockItem(name)
         name = name,
         icon = "__base__/graphics/icons/constant-combinator.png",
         icon_size = 64,
-        subgroup = "storage",
+        subgroup = "other",
         order = "z[" .. name .. "]",
         place_result = name,
         stack_size = 100
@@ -37,10 +38,3 @@ end
 data:extend({createBlock("command-block", "constant-combinator", "constant-combinator")})
 data:extend({createBlockItem("command-block")})
 data:extend({createBlockRecipe("command-block")})
-
-local nexus = createBlock("command-nexus", "constant-combinator", "constant-combinator")
-nexus.max_health = 1000
-nexus.minable.mining_time = 30
-data:extend({nexus})
-data:extend({createBlockItem("command-nexus")})
-data:extend({createBlockRecipe("command-nexus")})

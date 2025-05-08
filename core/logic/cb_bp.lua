@@ -1,5 +1,4 @@
 local cb = require("core.logic.cb")
-local runner = require("core.logic.cb_runner")
 local scripts = require("core.storage.scripts")
 local hooks = require("core.hooks")
 local M = {}
@@ -35,12 +34,12 @@ local function generate_bp_tags(bp, mapping_array)
 end
 
 ---@param e EventData.on_player_setup_blueprint
-function M.setup_blueprint(e)
+hooks.add_hook(cb_events.on_setup_blueprint, function(e)
     local player = game.get_player(e.player_index)
     local mapping = e.mapping
-    local mapping_array = mapping.get()
 
     if player and mapping.valid then
+        local mapping_array = mapping.get()
         local bp = player.cursor_stack or player.blueprint_to_setup
 
         if not bp or not bp.valid_for_read then
@@ -49,10 +48,10 @@ function M.setup_blueprint(e)
 
         generate_bp_tags(bp, mapping_array)
     end
-end
+end)
 
 ---@param e EventData.on_built_entity
-hooks.add_hook("on_build", function(e)
+hooks.add_hook(cb_events.on_build, function(e)
     local ent = e.entity
     local tags = e.tags
 
@@ -73,7 +72,7 @@ hooks.add_hook("on_build", function(e)
         real_data.key = key
         real_data.enabled = data.enabled
 
-        runner.run(real_data)
+        cb.run_key(real_data)
     end
 end)
 

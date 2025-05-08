@@ -1,15 +1,14 @@
 local time_wheel = require("core.time_wheel")
-__tasks = time_wheel.create(1024)
-__api_tasks = time_wheel.create(1024)
-
-local hooks  = require("core.hooks")
-local api = require("core.api")
 local events = require("core.events")
-local nexus = require("core.logic.nexus")
-local cb = require("core.logic.cb")
-local cb_hooker = require("core.logic.cb_hooks")
-local blueprint = require("core.logic.cb_bp")
-local gui = require("core.gui")
+__tasks = time_wheel.create(4096)
+
+require("core.hooks")
+require("core.api")
+require("core.logic.cb")
+require("core.logic.cb_hooks")
+require("core.ui.editor")
+require("core.ui.editor_hooks")
+require("core.logic.cb_bp")
 
 local d_e = defines.events
 
@@ -34,17 +33,16 @@ script.on_event(d_e.on_tick, function()
         __loaded = true
     end
 
-    time_wheel.run_tick(__tasks)
-    time_wheel.safe_run_tick(__api_tasks)
+    time_wheel.safe_run_tick(__tasks)
 end)
 
 script.on_event(build_events, events.on_build)
 script.on_event(destroy_events, events.on_destroy)
-
-script.on_event(d_e.on_gui_opened, gui.on_open)
-script.on_event(d_e.on_gui_closed, gui.on_close)
-script.on_event(d_e.on_gui_click, gui.on_click)
-script.on_event(d_e.on_gui_text_changed, gui.on_text_changed)
-script.on_event(d_e.on_gui_selection_state_changed, gui.on_selected)
-
-script.on_event(d_e.on_player_setup_blueprint, blueprint.setup_blueprint)
+script.on_event(d_e.on_gui_opened, events.on_gui_open)
+script.on_event(d_e.on_gui_closed, events.on_gui_close)
+script.on_event(d_e.on_gui_click, events.on_gui_click)
+script.on_event(d_e.on_gui_text_changed, events.on_gui_text_changed)
+script.on_event(d_e.on_gui_selection_state_changed, events.on_gui_selected)
+script.on_event(d_e.on_player_setup_blueprint, events.on_setup_blueprint)
+script.on_event(d_e.on_player_cursor_stack_changed, events.on_stack_changed)
+script.on_event(d_e.on_player_selected_area, events.on_selected_area)

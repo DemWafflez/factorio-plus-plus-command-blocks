@@ -3,22 +3,7 @@ local hooks = {}
 
 local callbacks = auto_table.create(1)
 
----@param name string
----@param func fun(...) : boolean | any
-function hooks.add_hook(name, func)
-    table.insert(callbacks[name], func)
-end
-
-function hooks.safe_generic_callback(name, ...)
-    local ok, error = pcall(hooks.generic_callback, name, ...)
-
-    if not ok then
-        game.print("[HOOK ERROR] " .. error)
-    end
-end
-
----@param name string
-function hooks.generic_callback(name, ...)
+local function trigger(name, ...)
     local cbs = callbacks[name]
 
     local i = 1
@@ -38,5 +23,21 @@ function hooks.generic_callback(name, ...)
     end
 end
 
+---@param name string
+---@param ... any
+function hooks.trigger_hook(name, ...)
+    local ok, error = pcall(trigger, name, ...)
+
+    if not ok then
+        game.print("[HOOK ERROR] " .. error)
+    end
+end
+
+---@param name string
+---@param func fun(...) : boolean | any
+function hooks.add_hook(name, func)
+    local array = callbacks[name]
+    array[#array + 1] = func
+end
 
 return hooks

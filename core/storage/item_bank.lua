@@ -4,7 +4,7 @@ local M = {}
 
 local cached_items = {}
 
-hooks.add_hook("on_load", function()
+hooks.add_hook(cb_events.on_load, function()
     storage.item_bank = storage.item_bank or {}
 
     for name, count in pairs(storage.item_bank) do
@@ -43,7 +43,7 @@ function M.inspect()
         table.insert(t, tostring(key))
         table.insert(t, " : ")
         table.insert(t, tostring(count))
-        table.insert(t, "  ")
+        table.insert(t, "\n")
     end
 
     return table.concat(t)

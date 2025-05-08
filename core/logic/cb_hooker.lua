@@ -1,6 +1,3 @@
-local nexus = require("core.logic.nexus")
-local out = require("core.modules.out_module")
-
 local caller_data = {}
 
 local allowed = {}
@@ -18,20 +15,16 @@ function M.hook_callback(caller, callback)
     local array = caller_data[caller_id] or {}
     local index = total + 1
 
+    array[#array + 1] = index
     allowed[index] = true
     funcs[index] = callback
-    array[#array + 1] = index
 
     caller_data[caller_id] = array
     total = index
 
     return function(...)
-        if allowed[index] then
-            if nexus.is_same_circuit(ent) then
-                return funcs[index](...)
-            else
-                out.print(caller, "Lost connection to nexus!")
-            end
+        if caller.enabled and allowed[index] then
+            return funcs[index](...)
         end
 
         return false
