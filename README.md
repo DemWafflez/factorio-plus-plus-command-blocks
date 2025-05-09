@@ -1,18 +1,28 @@
-Boom. I have officially taken the idea of Minecraft's command blocks to the next level in Factorio. 
+From Minecraft command blocks to Factorio.
 
-I'd say this mod has nearly infinite potential. Practically anything is possible. It's just a matter of writing the modules for it, and adding it to the api now. 
+This mod adds a new block called a Command Block that allows for high performance factory scripting in Lua. Has been battletested to orchestrate 40k machines with minimal lag.
 
-And that's the hard part. I don't know what's possible since I'm the only current user, and that's why I'm deciding to release it. 
+As of now, here are the core things the api gives access to:
 
-As more people end up using this mod, that's when this mod can really grow. 
+TaskModule - Allows for dynamic tick scheduling
+HookModule - Allows for hooking onto some game events and custom events.
+OutModule - Allows for basic debug printing
+WireModule - Allows for circuitry operations like traversing a wire system or signal stuff.
+InvModule - Allows for basic inventory operations
+BankModule - Allows for a virtual item storage that simplifies a lot of the complexities of scripting.
+Like instead of a massive item bus, the bank module abstracts that away and allows for more cleaner item routing.
 
-I'd say the target users are the mad man's that are obssessed with optimizing their megabases or the ones that are building entire cpus in game. Basically non casual players.
+All of these modules are in the core/modules folder.
 
-Oh yeah. The api isn't so beginner friendly. Be ready for callbacks, hooks, and scheduling. It's not super complex, but definitely not for first time coders.
+-------------------------
 
-I'm also open to contributors. Especially for things like art and ui (I suck at those). Feel free to contribute modules also (if they're decent quality).
+It also gives access to:
+LuaGameScript (https://lua-api.factorio.com/latest/classes/LuaGameScript.html)
+LuaPrototypes (https://lua-api.factorio.com/latest/classes/LuaPrototypes.html)
 
-Highly recommended to use a decent text editor like VS code, and then paste into the ingame gui!
+-------------------------
 
-Check the examples for more aswell. That's all there is for now.
-
+Future Plans:
+1. More Modules
+2. Actual Art
+3. Better UI
