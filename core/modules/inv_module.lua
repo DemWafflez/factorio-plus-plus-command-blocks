@@ -1,7 +1,6 @@
 local inv_types = require("core.other.inv_types")
 local auto_table = require("core.utils.auto_table")
 local hooks = require("core.hooks")
-local smelted = require("core.other.smelting_results")
 
 local M = {}
 

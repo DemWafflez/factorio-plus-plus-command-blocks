@@ -4,7 +4,7 @@ I'd say this mod has nearly infinite potential. Practically anything is possible
 
 And that's the hard part. I don't know what's possible since I'm the only current user, and that's why I'm deciding to release it. 
 
-As more people end up using this mod (if ever), that's when this mod can really grow. 
+As more people end up using this mod, that's when this mod can really grow. 
 
 I'd say the target users are the mad man's that are obssessed with optimizing their megabases or the ones that are building entire cpus in game. Basically non casual players.
 
@@ -17,6 +17,7 @@ I'm also open to contributors. Especially for things like art and ui (I suck at 
 
 Here's a bit of what the mod's capable of. This production here is powered by the scripts in the examples. While the automation is insane, defending against biters isn't so trivial... Especially when pollution is coming in at a whopping rate of 150k/m. That's where the hard part of this mod comes in. Scripting dynamic defenses.
 
+Highly recommended to use a decent text editor like VS code, and then paste into the ingame gui!
 
 It's time for release! I actually wonder how people will use this mod. We've seen how people used combinators in crazy ways so yeah.🚚🚚🚚
 
