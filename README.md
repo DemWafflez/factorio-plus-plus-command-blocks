@@ -17,12 +17,15 @@ All of these modules are in the core/modules folder.
 -------------------------
 
 It also gives access to:
+
 LuaGameScript (https://lua-api.factorio.com/latest/classes/LuaGameScript.html)
+
 LuaPrototypes (https://lua-api.factorio.com/latest/classes/LuaPrototypes.html)
 
 -------------------------
 
 Future Plans:
+
 1. More Modules
 2. Actual Art
 3. Better UI
