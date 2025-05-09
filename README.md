@@ -15,4 +15,8 @@ I'm also open to contributors. Especially for things like art and ui (I suck at 
 Not the most polished github page, but I'm just trying to get the main points out.
 
 
-It's time for release! I actually wonder how people will use this mod (if any). We've seen how people used combinators in crazy ways so yeah.🚚🚚🚚
+It's time for release! I actually wonder how people will use this mod. We've seen how people used combinators in crazy ways so yeah.🚚🚚🚚
+
+![test](https://github.com/user-attachments/assets/964df618-3463-4c83-be5d-af78ba0bff97)
+
+Here's a bit of what the mod's capable of.
