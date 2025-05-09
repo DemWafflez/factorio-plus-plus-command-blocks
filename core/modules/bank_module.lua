@@ -7,6 +7,10 @@ local M = {}
 local cached_item = {name = "", count = 0}
 local proto_item = prototypes.item
 
+function M.get_count(name)
+    return bank.get_count(name)
+end
+
 ---@param item Item
 function M.item_to_bank(item)
     if item.valid_for_read then

@@ -32,8 +32,10 @@ hooks.add_hook(cb_events.on_compile_all, function()
     hooker.disable_all_caller_callbacks()
     
 
-    for _, data in pairs(storage.command_blocks) do
-        cb.try_run_cb(data)
+    if storage.command_blocks then
+        for _, data in pairs(storage.command_blocks) do
+            cb.try_run_cb(data)
+        end
     end
 end)
 

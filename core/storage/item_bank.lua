@@ -41,11 +41,11 @@ function M.inspect()
     local t = {}
     local i = 0
     for key, count in pairs(cached_items) do
+        t[i * 4 + 1] = tostring(key)
+        t[i * 4 + 2] = " : "
+        t[i * 4 + 3] = tostring(count)
+        t[i * 4 + 4] = "\n"
         i = i + 1
-        t[i] = tostring(key)
-        t[i + 1] = " : "
-        t[i + 2] = tostring(count)
-        t[i + 3] = "\n"
     end
 
     return table.concat(t)

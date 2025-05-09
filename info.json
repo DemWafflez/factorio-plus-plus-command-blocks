@@ -1,9 +1,9 @@
 {
     "name": "command-block",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "title": "Factorio++: Command Blocks",
     "author": "murkmusic",
-    "description": "Adds a fully scriptable block that allows for a whole new way to play the game! Takes the idea of Minecraft's command blocks to a whole nother level.",
-    "factorio_version": "2.0.0",
-    "dependencies": ["base >= 2.0.0"]
+    "description": "Adds a new fully scriptable block that is capable of interacting with the world.",
+    "factorio_version": "2.0",
+    "dependencies": ["base >= 2.0"]
   }

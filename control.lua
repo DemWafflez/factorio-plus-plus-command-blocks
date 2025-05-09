@@ -33,7 +33,7 @@ script.on_event(d_e.on_tick, function()
         __loaded = true
     end
 
-    time_wheel.safe_run_tick(__tasks)
+    time_wheel.run_tick(__tasks)
 end)
 
 script.on_event(build_events, events.on_build)

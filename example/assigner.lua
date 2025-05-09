@@ -14,12 +14,21 @@ local function main(api, caller)
     local cycles = 0
     local cycles_2 = 0
 
-    api.task.schedule(caller, 60, function() -- cycles ores
+    api.task.schedule(caller, 1, function()
         local i = cycles % total_ores + 1
-        api.hook.trigger_hook("smelt_ore", ores[i]) -- trigger smelt ore listener
 
+        if api.bank.get_count(ores[i]) <= 0 then -- cycle ores on empty
+            cycles = cycles + 1
+            return 1
+        end
+
+        api.hook.trigger_hook("refuel_ore", ores[i])
+        return 60
+    end)
+
+    api.task.schedule(caller, 1, function() -- cycles ores every 10 sec
         cycles = cycles + 1
-        return 1200 -- 20 seconds
+        return 600 -- 10 seconds
     end)
 
     api.task.schedule(caller, 1, function() -- cycles recipes to build up to final product

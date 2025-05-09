@@ -1,3 +1,5 @@
+
+
 ---@param api API
 ---@param caller CB
 local function main(api, caller)
@@ -15,29 +17,20 @@ local function main(api, caller)
         result_items[i] = r[1]
     end
 
-    api.hook.add_hook(caller, "smelt_ore", function(ore) -- similar scenario to assember.lua
-        api.task.split_task(caller, #ore_items, 20, 10, function(s, e)
+    api.hook.add_hook(caller, "refuel_ore", function(ore)
+        api.task.split_task(caller, #ore_items, 10, 10, function(s, e)
             for i = s, e do
-                -- removes all old ores and results into bank
+                -- refresh
                 api.bank.item_to_bank(ore_items[i])
+                api.bank.item_to_bank(fuel_items[i])
                 api.bank.item_to_bank(result_items[i])
 
                 -- puts ore and fuel into furnace
-                api.bank.bank_to_item(ore, 25, ore_items[i])
-                api.bank.bank_to_item("coal", 25, fuel_items[i])
+                api.bank.bank_to_item(ore, 2, ore_items[i])
+                api.bank.bank_to_item("coal", 2, fuel_items[i])
             end
-    
-
-            api.task.schedule(caller, 120, function() -- edge case cleanup just in case furnace smelted
-                for i = s, e do
-                    api.bank.item_to_bank(result_items[i])
-                end
-            
-                return false
-            end)
         end)
     end)
-
 end
 
 return main

@@ -57,6 +57,8 @@ function M.bfs_wire(entity, wire_color)
 
     if not bfs_result then
         bfs_result = bfs(entity, wire_color)
+
+        old_wire_count[network] = #bfs_result
         cached_bfs[id] = bfs_result
     end
 

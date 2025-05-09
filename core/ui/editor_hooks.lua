@@ -18,6 +18,7 @@ local on_click = {
             dropdown.selected_index = new_index
 
             scripts.add_script(text, "")
+            dropdown.parent.script_text.text = ""
         end
     end,
 
@@ -30,7 +31,6 @@ local on_click = {
             local ent = editor.get_opened_entity(player)
 
             cb.get_cb(ent.unit_number).key = key
-            elem.caption = "Selected: " .. key
         end
     end,
 

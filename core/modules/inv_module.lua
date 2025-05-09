@@ -1,7 +1,6 @@
 local inv_types = require("core.other.inv_types")
 local auto_table = require("core.utils.auto_table")
 local hooks = require("core.hooks")
-local smelted = require("core.other.smelting_results")
 
 local M = {}
 
@@ -49,10 +48,5 @@ function M.get_inv_bulk(entity, ...)
 
     return table.unpack(args)
 end
-
-hooks.add_hook(cb_events.on_destroy, function(e)
-    local ent = e.entity
-    cached_inv[ent.unit_number] = nil
-end)
 
 return M

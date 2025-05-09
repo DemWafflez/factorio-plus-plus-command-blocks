@@ -75,13 +75,16 @@ function M.compile_all()
     for key, dirty in pairs(dirty_flags) do
         if dirty then
             local script = storage.scripts[key]
-            local func, error = load(script, key, "t", shared_script_table)
+            
+            if script ~= "" then
+                local func, error = load(script, key, "t", shared_script_table)
 
-            if func then
-                compiled_funcs[key] = func
-            else 
-                game.print("[COMPILE ERROR] : " .. error)
-                compiled_funcs[key] = nil
+                if func then
+                    compiled_funcs[key] = func
+                else 
+                    game.print("[COMPILE ERROR] : " .. error)
+                    compiled_funcs[key] = nil
+                end
             end
 
             dirty_flags[key] = nil
@@ -102,7 +105,9 @@ function M.run_key(key, api, caller)
     if not func then return end
 
     local ok, result = pcall(function()
-        func()(api, caller)
+        local main = func()
+        assert(main ~= nil, "MAIN FUNCTION NOT RETURNED IN: " .. key)
+        main(api, caller)
     end)
 
     if not ok then

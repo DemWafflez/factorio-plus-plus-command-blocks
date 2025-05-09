@@ -6,8 +6,9 @@ local M = {}
 
 ---@type table<string, string>
 cb_events = {
+    on_init = "on_init",
     on_build = "on_build",
-    on_destroy = "on_build",
+    on_destroy = "on_destroy",
     on_load = "on_load",
     on_gui_open = "on_gui_open",
     on_gui_close = "on_gui_close",
@@ -20,6 +21,7 @@ cb_events = {
     on_compile_all = "on_compile_all"
 }
 
+function M.on_init(e) trigg("on_init", e) end
 function M.on_build(e) trigg("on_build", e) end
 function M.on_destroy(e) trigg("on_destroy", e) end
 function M.on_load(e) trigg("on_load", e) end

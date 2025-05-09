@@ -5,7 +5,6 @@
 ---@field expected_ticks integer[]
 ---@field total_ids integer
 ---@field reuse_ids integer[]
----@field last_cb_id integer
 ---@field curr_index integer
 ---@field curr_tick integer
 local M = {}
@@ -28,8 +27,7 @@ function M.create(num_buckets)
         total_ids = 0,
 
         curr_index = 0,
-        curr_tick = 0,
-        last_cb_id = 0
+        curr_tick = 0
     }
 end
 
@@ -94,23 +92,13 @@ function M.split_task(wheel, size, total_ticks, dt_per_tick, callback)
         end
 
         local start = i * dx + 1
-        local last = i < total_ticks and start + dx - 1 or size
+        local last = i < total_ticks - 1 and start + dx - 1 or size
 
         callback(start, last)
 
         i = i + 1
         return dt_per_tick
     end)
-end
-
----@param wheel TimeWheel
-function M.safe_run_tick(wheel)
-    local ok, error = pcall(M.run_tick, wheel)
-
-    if not ok then
-        M.clear_id(wheel, wheel.last_cb_id)
-        game.print("[SCHEDULER ERROR] " .. error)
-    end
 end
 
 ---@param wheel TimeWheel
@@ -139,8 +127,12 @@ function M.run_tick(wheel)
         local id = array[i]
 
         if tick >= expected_ticks[id] then
-            wheel.last_cb_id = id
-            local dt = callbacks[id](id)
+            local ok, dt = pcall(callbacks[id], id) -- gotta accept the perf loss here
+
+            if not ok then
+                game.print("[SCHEDULER ERROR] " .. dt)
+                dt = false
+            end
 
             if dt == false then
                 reuse_ids[#reuse_ids + 1] = id
