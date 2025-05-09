@@ -12,11 +12,11 @@ Oh yeah. The api isn't so beginner friendly. Be ready for callbacks, hooks, and 
 
 I'm also open to contributors. Especially for things like art and ui (I suck at those). Feel free to contribute modules also (if they're decent quality).
 
-Not the most polished github page, but I'm just trying to get the main points out.
+
+![test](https://github.com/user-attachments/assets/964df618-3463-4c83-be5d-af78ba0bff97)
+
+Here's a bit of what the mod's capable of. This production here is powered by the scripts in the examples. While the automation is insane, defending against biters isn't so trivial... Especially when pollution is coming in at a whopping rate of 150k/m. That's where the hard part of this mod comes in. Scripting dynamic defenses.
 
 
 It's time for release! I actually wonder how people will use this mod. We've seen how people used combinators in crazy ways so yeah.🚚🚚🚚
 
-![test](https://github.com/user-attachments/assets/964df618-3463-4c83-be5d-af78ba0bff97)
-
-Here's a bit of what the mod's capable of.
