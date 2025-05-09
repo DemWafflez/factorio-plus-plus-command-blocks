@@ -17,7 +17,7 @@ As of now, here are the core things the api gives access to:
   
   **InvModule** - Allows for basic inventory operations
   
-  **BankModule** - Allows for a virtual item storage that simplifies a lot of the complexities of scripting. Like instead of a massive item bus, the bank module abstracts that away and allows for much cleaner item routing. 100% optional module. I don't want to be offending anyone.
+  **BankModule** - Allows for a virtual item storage that simplifies a lot of the complexities of scripting. Like instead of a massive item bus, the bank module abstracts that away and allows for much cleaner item routing.
 
 [core/modules](./core/modules)
 
