@@ -19,7 +19,7 @@ As of now, here are the core things the api gives access to:
   
   **BankModule** - Allows for a virtual item storage that simplifies a lot of the complexities of scripting. Like instead of a massive item bus, the bank module abstracts that away and allows for much cleaner item routing. 100% optional module. I don't want to be offending anyone.
 
-[`core/modules`](./core/modules)
+[core/modules](./core/modules)
 
 -------------------------
 
@@ -35,6 +35,6 @@ It also gives access to:
 
 Future Plans:
 
-1. **More Modules** – Expand the API with additional building blocks (e.g. entity control, map scanning, blueprinting).
+1. **More Modules** – Expand the API with additional building blocks.
 2. **Custom Art** – Add proper sprites and visual polish for the Command Block.
 3. **Improved UI** – Enhance the in-game editor and scripting interface for better usability.
