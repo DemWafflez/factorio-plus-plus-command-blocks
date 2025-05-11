@@ -1,4 +1,4 @@
-# **From Minecraft command blocks to Factorio.**
+# **FactoriOS - Lua-Powered Factory Orchestration**
 
 This mod adds a new block called a Command Block that allows for high performance factory scripting in Lua. Has been battletested to orchestrate 40k furances/assemblers/labs with minimal lag.
 
@@ -63,6 +63,8 @@ end
 return main
 ```
 
+![Screenshot 2025-05-10 180250](https://github.com/user-attachments/assets/c2058fd3-50b0-4c3d-ae74-39d3b3548d03)
+
 inspect.lua
 
 ```lua
@@ -77,6 +79,8 @@ end
 
 return main
 ```
+
+![Screenshot 2025-05-10 180140](https://github.com/user-attachments/assets/375835c7-b691-4a71-878c-9d4d1216da26)
 
 drill.lua
 
@@ -108,6 +112,8 @@ end
 
 return main
 ```
+
+![Screenshot 2025-05-10 180058](https://github.com/user-attachments/assets/2050bf47-dfc6-4b0c-b944-07db9fd85d50)
 
 output_to_chest.lua
 
