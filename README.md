@@ -1,4 +1,4 @@
-# **FactoriOS - Lua-Powered Factory Orchestration**
+# **FactoriOS - Lua-Powered Command Blocks**
 
 This mod adds a new block called a Command Block that allows for high performance factory scripting in Lua. Has been battletested to orchestrate 40k furances/assemblers/labs with minimal lag.
 
