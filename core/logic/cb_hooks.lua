@@ -7,6 +7,18 @@ local out = require("core.modules.out_module")
 hooks.add_hook(cb_events.on_load, function()
     ---@type table<integer, CB>
     storage.command_blocks = storage.command_blocks or {}
+    
+    local cbs = storage.command_blocks
+    local found = game.surfaces[1].find_entities_filtered{name = "command-block"}
+
+    for i, ent in ipairs(found) do
+        local id = ent.unit_number
+        
+        if id and not cbs[id] then
+            cbs[id] = cb.create_cb(ent)
+        end
+    end
+    
     return false
 end)
 
@@ -42,7 +54,7 @@ end)
 tw.schedule(__tasks, 1, function()
     local offset = {0,-1}
     local color = {1,1,1}
-    local time = 120
+    local time = 60
 
     for _, data in pairs(storage.command_blocks) do
         out.print(data, data.key .. " : " .. tostring(data.enabled), offset, color, time)

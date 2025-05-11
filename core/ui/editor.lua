@@ -29,8 +29,8 @@ local function create_text_box(window, data)
     local key = data.key
     local text_box = window.add{type = "text-box", name = "script_text"}
     text_box.text = scripts.exist_script(key) and scripts.get_script(key) or ""
-    text_box.style.width = 400
-    text_box.style.height = 350
+    text_box.style.width = 550
+    text_box.style.height = 500
     text_box.style.font = "default-large"
 end
 
@@ -39,7 +39,7 @@ end
 local function create_bottom_buttons(window, data)
     local flow_2 = window.add{type = "flow", name = "flow_2", direction = "horizontal"}
     flow_2.add{type = "button", name = "toggle_enabled", caption = data.enabled and "ON" or "OFF"}
-    flow_2.add{type = "button", name = "set_current", caption = "Select Curr Script"}
+    flow_2.add{type = "button", name = "set_current", caption = "Select Current Script"}
     flow_2.add{type = "button", name = "delete_current", caption = "Delete Current Script"}
     window.add{type = "button", name = "compile_all", caption = "Compile All"}
 end
@@ -67,8 +67,8 @@ function M.create_window(player, entity)
 
     local window = gui.add{type = "frame", name = "cb_window", caption = "Command Block Window", direction = "vertical"}
     window.auto_center = true
-    window.style.width = 500
-    window.style.height = 520
+    window.style.width = 650
+    window.style.height = 680
 
     create_top_buttons(window, data)
     create_dropdown(window, data)

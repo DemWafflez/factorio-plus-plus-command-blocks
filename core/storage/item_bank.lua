@@ -16,6 +16,22 @@ function M.get_count(name)
     return cached_items[name] or 0
 end
 
+function M.get_craftable_count(recipe_name)
+    local ingredients = prototypes.recipe[recipe_name].ingredients
+    local count = nil
+
+    for _, item in ipairs(ingredients) do
+        local c = math.floor((cached_items[item.name] or 0) / item.amount)
+        if c == 0 then return 0 end
+
+        if not count or c < count then
+            count = c
+        end
+    end
+
+    return count or 0
+end
+
 function M.add(name, count)
     cached_items[name] = (cached_items[name] or 0) + count
     return count

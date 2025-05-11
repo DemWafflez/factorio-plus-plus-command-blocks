@@ -21,6 +21,14 @@ local shared_script_table = {
     string = string
 }
 
+local function inject_game_utils() -- run at runtime
+    local t = shared_script_table
+
+    t.game = game
+    t.prototypes = prototypes
+    t.serpent = serpent
+end
+
 function M.add_script(key, script) 
     assert(storage.scripts[key] == nil, "Script already exists!")
     storage.scripts[key] = script
@@ -28,13 +36,13 @@ function M.add_script(key, script)
 end
 
 function M.update_script(key, script)
-    assert(storage.scripts[key] ~= nil, "Script doent exist!")
+    assert(storage.scripts[key] ~= nil, "Script doesnt exist!")
     storage.scripts[key] = script
     dirty_flags[key] = true
 end
 
 function M.get_script(key)
-    assert(storage.scripts[key] ~= nil, "Script doent exist!")
+    assert(storage.scripts[key] ~= nil, "Script doesnt exist!")
     return storage.scripts[key]
 end
 
@@ -68,9 +76,7 @@ end
 
 function M.compile_all()
     game.print("RECOMPILING ALL SCRIPTS...")
-
-    shared_script_table.game = game
-    shared_script_table.prototypes = prototypes
+    inject_game_utils()
 
     for key, dirty in pairs(dirty_flags) do
         if dirty then

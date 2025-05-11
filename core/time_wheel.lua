@@ -86,6 +86,15 @@ function M.split_task(wheel, size, total_ticks, dt_per_tick, callback)
     local dx = math.floor(size / total_ticks)
     local i = 0
 
+    if dx == 0 then
+        M.schedule(wheel, dt_per_tick, function()
+            callback(1, size)
+            return false
+        end)
+        
+        return
+    end
+
     M.schedule(wheel, dt_per_tick, function()
         if i >= total_ticks then
             return false

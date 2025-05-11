@@ -1,4 +1,5 @@
 ---@class CB
+---@description AKA Command Block
 ---@field ent LuaEntity
 ---@field key string
 ---@field enabled boolean
@@ -11,7 +12,7 @@ local M = {}
 ---@return CB
 function M.get_cb(id)
     local cb = storage.command_blocks[id]
-    assert(cb ~= nil, "ID DOES NOT EXIST")
+    assert(cb ~= nil, "Command Block ID does not exist!")
     return cb
 end
 

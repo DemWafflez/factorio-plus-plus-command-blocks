@@ -12,6 +12,8 @@ function M.hook_callback(caller, callback)
     local ent = caller.ent
 
     local caller_id = ent.unit_number
+    assert(caller_id ~= nil, "Caller ID is nil")
+
     local array = caller_data[caller_id] or {}
     caller_data[caller_id] = array
 
